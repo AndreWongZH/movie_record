@@ -25,3 +25,4 @@ for file in os.listdir(pathname):
 
 with open('data.json', 'w') as outfile:
     json.dump(data, outfile)
+

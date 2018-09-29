@@ -6,7 +6,7 @@ import json
 from JSON_handler.read_JSON import get_data
 
 def open_write(data):
-    with open("data.json", "w") as fileopen:
+    with open("A:\Coding projects\main projects folder\movie_record\JSON_handler\data.json", "w") as fileopen:
         json.dump(data, fileopen)
 
 def write_data(watched, name):
@@ -24,6 +24,3 @@ def write_data(watched, name):
         open_write(data)
 
     return None
-
-
-write_data(True, "how i met your mother")
