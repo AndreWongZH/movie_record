@@ -2,7 +2,7 @@
 Start a new tkinter window to display the main page
 """
 from tkinter import *
-from JSON_handler import read_JSON, write_JSON
+from JSON_handler import read_JSON, write_JSON, delete_JSON
 
 class App:
     def __init__(self, master):
@@ -17,7 +17,7 @@ class App:
         frame2 = Frame(master=master, width=330, height=50, borderwidth=10)
         frame2.pack()
 
-        #this button list all movies
+        #this button access list all movies page
         self.button_1 = Button(frame2, text="List all movies",
                                width=20,
                                height=5,
@@ -25,7 +25,7 @@ class App:
                                command=App.list_movie_page)
         self.button_1.pack(side="left")
 
-        # this button add a movie
+        # this button access the add movie page
         self.button_2 = Button(frame2, text="Add movies",
                                width=20,
                                height=5,
@@ -76,6 +76,12 @@ class App:
                                   borderwidth=5)
         quit_button_2.grid(row=5)
 
+        # this button access the delete movie page
+        button_3 = Button(top, text="Delete movies", command=App.delete_movie_page)
+        button_3.grid(row=6)
+
+
+
 
     def add_movie_page():
         top = Toplevel()
@@ -97,8 +103,6 @@ class App:
         toggle_watched.grid(row=2, column=0)
         toggle_pending.grid(row=2, column=1)
 
-
-
         # write movie name into database
         def _get_movie():
             movie_name = text_field.get()
@@ -119,6 +123,61 @@ class App:
         # quit button
         quit_button_3 = Button(top, text="Return to Main Page", command=top.destroy)
         quit_button_3.grid(row=3, column=1)
+
+    def delete_movie_page():
+        top = Toplevel()
+        top.title("Delete movie")
+
+        label_title = Label(top, text="select movies to delete from database", font=("Courier", 15))
+        label_title.grid(row=0)
+
+        # get data of list of movies
+        data = read_JSON.get_data()
+
+        # frame for showing list of movies
+        frameList = Frame(top, width=330, height=50)
+        frameList.grid(row=1)
+
+        # construct text boxes to display watched movies
+        label_watched = Label(frameList, text="Movies Watched", font=("arial", 10, "bold"))
+        label_watched.grid(row=0, column=0)
+        listbox_watched = Listbox(frameList)
+        listbox_watched.grid(row=1, column=0)
+        for number in range(len(data["watched"])):
+            listbox_watched.insert(END, data["watched"][number])
+
+        # construct list boxes to display pending movies
+        label_watched = Label(frameList, text="Movies Pending", font=("arial", 10, "bold"))
+        label_watched.grid(row=0, column=1)
+        listbox_pending = Listbox(frameList)
+        listbox_pending.grid(row=1, column=1)
+        for number in range(len(data["pending"])):
+            listbox_pending.insert(END, data["pending"][number])
+
+        #function to delete movies from datbase
+        def _delete_movies():
+            # delete the pending movies
+            name = listbox_pending.get(ACTIVE)
+            listbox_pending.delete(ACTIVE)
+            delete_JSON.delete_data(False, name)
+
+            # delete the watched movies
+            name = listbox_watched.get(ACTIVE)
+            listbox_watched.delete(ACTIVE)
+            delete_JSON.delete_data(True, name)
+
+        # button to delete movies
+        delete_button = Button(top, text="Delete Movies", command=_delete_movies)
+        delete_button.grid(row=11)
+
+        # the quit button
+        quit_button_2 = Button(top, text="Return to List Movies Page",
+                               command=top.destroy,
+                               width=20,
+                               height=2,
+                               borderwidth=5)
+        quit_button_2.grid(row=5)
+
 
 
 
